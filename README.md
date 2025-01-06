@@ -1,3 +1,3 @@
 # lucide-roblox-direct
 
-https://github.com/latte-soft/lucide-roblox/ but builded from 0.469.0
+https://github.com/VirtualButFake/lucide-roblox/ builded from 0.469.0

@@ -1,5 +1,7 @@
 local Lucide = {}
 
+local IS_GETCUSTOMASSET_BROKEN = false
+
 if writefile and isfolder and makefolder and getcustomasset then
 	if not isfolder("lucide-icons") then
 		makefolder("lucide-icons")
@@ -23,6 +25,12 @@ if writefile and isfolder and makefolder and getcustomasset then
 			)
 		)
 	end
+
+	local Success, _Error = pcall(function()
+		return getcustomasset("lucide-icons/1.png")
+	end)
+
+	IS_GETCUSTOMASSET_BROKEN = not Success
 end
 
 local icons = DATA_ICON_MAPPINGS

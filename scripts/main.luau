@@ -302,7 +302,7 @@ end
 for id, _ in InsertedIds do
 	SerializedData = SerializedData:gsub(
 		`"rbxassetid://{id}"`,
-		`if getcustomasset then getcustomasset("lucide-icons/{id}.png") else "https://www.roblox.com/asset/?id={RealRobloxAssetID[id]}"`
+		`if getcustomasset and not IS_GETCUSTOMASSET_BROKEN then getcustomasset("lucide-icons/{id}.png") else "https://www.roblox.com/asset/?id={RealRobloxAssetID[id]}"`
 	)
 end
 

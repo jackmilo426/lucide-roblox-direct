@@ -47,6 +47,7 @@ jobs:
       - name: Trust and install tools
         run: |
           rm -rf rokit.toml
+          rokit init
           rokit trust lune-org/lune
           rokit add lune-org/lune
 

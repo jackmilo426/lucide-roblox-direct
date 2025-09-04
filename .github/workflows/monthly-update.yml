@@ -46,21 +46,21 @@ jobs:
 
       - name: Trust and install tools
         run: |
-          rokit trust rojo-rbx/tarmac
           rokit trust lune-org/lune
           rokit install
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build tarmac from source (OpenSSL 3 compatible)
+      - name: Build tarmac from source
         run: |
           set -euo pipefail
           cargo install --git https://github.com/rojo-rbx/tarmac --locked
-          command -v tarmac
+          # Prepend cargo bin to PATH for subsequent steps
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          # Show versions and resolution
           ~/.cargo/bin/tarmac --version || true
-          # Ensure our built tarmac takes precedence
-          sudo ln -sf "$HOME/.cargo/bin/tarmac" /usr/local/bin/tarmac
+          which tarmac || true
 
       - name: Install Python dependencies
         run: |
@@ -72,6 +72,9 @@ jobs:
           ROBLOX_API_TOKEN: ${{ secrets.ROBLOX_API_TOKEN }}
           ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
         run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          which tarmac
+          tarmac --version
           lune run scripts/main.luau
 
       - name: Commit and push changes

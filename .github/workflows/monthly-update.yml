@@ -46,6 +46,8 @@ jobs:
 
       - name: Trust and install tools
         run: |
+          rm -rf rokit.toml
+          rokit trust lune-org/lune
           rokit add lune-org/lune
 
       - name: Setup Rust toolchain

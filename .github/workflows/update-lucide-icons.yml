@@ -1,4 +1,4 @@
-name: Monthly Lucide Build
+name: Update to latest Lucide Icons
 
 on:
   schedule:

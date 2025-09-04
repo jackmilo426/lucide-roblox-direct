@@ -41,7 +41,7 @@ function RunCommand(cmd: string, cwd: string?, check: boolean?): any
 
 	if checkFlag and not result.ok then
 		stdio.ewrite(`Error running command: {cmd}\n`)
-		stdio.ewrite(`Exit code: {result.code}\n`)
+		stdio.ewrite(`Exit code: {result.code}\nOutput:{result.stdout}\n{result.stderr}`)
 		process.exit(1)
 	end
 

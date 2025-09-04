@@ -46,8 +46,7 @@ jobs:
 
       - name: Trust and install tools
         run: |
-          rokit trust lune-org/lune
-          rokit install
+          rokit add lune-org/lune
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable

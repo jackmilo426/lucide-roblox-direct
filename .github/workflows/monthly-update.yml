@@ -25,17 +25,20 @@ jobs:
       - name: Install system dependencies (Inkscape, ImageMagick)
         run: |
           sudo apt-get update
-          sudo apt-get install -y inkscape imagemagick
+          sudo apt-get install -y inkscape imagemagick build-essential pkg-config libssl-dev
 
-      - name: Ensure `magick` is available (shim for ImageMagick)
+      - name: Ensure ImageMagick CLI (magick)
         run: |
+          set -euo pipefail
           if ! command -v magick >/dev/null 2>&1; then
-            echo '#!/usr/bin/env bash' > magick
-            echo 'convert "$@"' >> magick
-            chmod +x magick
-            echo "$PWD" >> $GITHUB_PATH
+            if command -v convert >/dev/null 2>&1; then
+              sudo ln -sf "$(command -v convert)" /usr/local/bin/magick
+            else
+              echo "ImageMagick not found; install failed?" >&2
+              exit 1
+            fi
           fi
-          magick -version || true
+          magick -version || convert -version || true
           inkscape --version
 
       - name: Setup RoKit
@@ -46,6 +49,18 @@ jobs:
           rokit trust rojo-rbx/tarmac
           rokit trust lune-org/lune
           rokit install
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build tarmac from source (OpenSSL 3 compatible)
+        run: |
+          set -euo pipefail
+          cargo install --git https://github.com/rojo-rbx/tarmac --locked
+          command -v tarmac
+          ~/.cargo/bin/tarmac --version || true
+          # Ensure our built tarmac takes precedence
+          sudo ln -sf "$HOME/.cargo/bin/tarmac" /usr/local/bin/tarmac
 
       - name: Install Python dependencies
         run: |

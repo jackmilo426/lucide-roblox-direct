@@ -1,0 +1,75 @@
+name: Monthly Lucide Build
+
+on:
+  schedule:
+    - cron: "0 0 1 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install system dependencies (Inkscape, ImageMagick)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y inkscape imagemagick
+
+      - name: Ensure `magick` is available (shim for ImageMagick)
+        run: |
+          if ! command -v magick >/dev/null 2>&1; then
+            echo '#!/usr/bin/env bash' > magick
+            echo 'convert "$@"' >> magick
+            chmod +x magick
+            echo "$PWD" >> $GITHUB_PATH
+          fi
+          magick -version || true
+          inkscape --version
+
+      - name: Setup RoKit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Trust and install tools
+        run: |
+          rokit trust rojo-rbx/tarmac
+          rokit trust lune-org/lune
+          rokit install
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build lucide and update source.lua
+        env:
+          ROBLOX_API_TOKEN: ${{ secrets.ROBLOX_API_TOKEN }}
+          ROBLOX_CREATOR_ID: ${{ secrets.ROBLOX_CREATOR_ID }}
+        run: |
+          lune run scripts/main.luau
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source.lua spritesheets
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(lucide): monthly build update [skip ci]"
+          git push

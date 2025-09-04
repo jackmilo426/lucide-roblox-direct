@@ -2,6 +2,10 @@
 
 lucide-roblox-direct is a script that directly gives you a standalone file that contains all the Lucide icons in Roblox. (Found in source.lua)
 
+## Usage
+
+Example module found [here](https://github.com/notpoiu/cobalt/blob/main/Src/Utils/Icons.luau)
+
 ## Building
 
 To build lucide-roblox-direct, you need to have Python 3 installed on your system. You can download it from [python.org](https://www.python.org/downloads/). Once you have Python installed, you can run the following command in your terminal:

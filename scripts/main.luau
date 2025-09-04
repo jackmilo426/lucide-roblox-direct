@@ -42,7 +42,6 @@ function RunCommand(cmd: string, cwd: string?, check: boolean?): any
 	if checkFlag and not result.ok then
 		stdio.ewrite(`Error running command: {cmd}\n`)
 		stdio.ewrite(`Exit code: {result.code}\nOutput:{result.stdout}\n{result.stderr}`)
-		process.exit(1)
 	end
 
 	return result
@@ -226,7 +225,11 @@ ProcessPngs()
 
 -- Create spritesheet
 print("Creating spritesheet...")
-RunCommand("tarmac sync --target debug")
+local SpriteSheetResult = RunCommand("tarmac sync --target debug")
+if not SpriteSheetResult.ok then
+	print("Error occured while creating spritesheet via tarmac")
+	process.exit(1)
+end
 
 -- Fetch icon mappings
 local TarmacIconMappings = {}

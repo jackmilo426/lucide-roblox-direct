@@ -2,7 +2,7 @@ local Lucide = {}
 
 local IS_GETCUSTOMASSET_BROKEN = true
 
-if writefile and isfolder and makefolder and getcustomasset then
+if writefile and isfolder and makefolder and IS_GETCUSTOMASSET_BROKEN then
 	if not isfolder("lucide-icons") then
 		makefolder("lucide-icons")
 	end
